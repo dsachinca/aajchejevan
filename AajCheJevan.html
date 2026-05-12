@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="Aaj che Jevan"/>
+<title>Aaj che Jevan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Marathi&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #FAFAF7;
+  --surface: #FFFFFF;
+  --border: #E8E6E0;
+  --border-light: #F0EEE8;
+  --text: #1C1A16;
+  --text-2: #6B6760;
+  --text-3: #A8A5A0;
+  --accent: #C8521A;
+  --accent-light: #FDF0EA;
+  --green: #2A7A4B;
+  --green-light: #EAF4EE;
+  --blue: #1A5C8A;
+  --blue-light: #EAF2FA;
+  --gold: #8A6A1A;
+  --gold-light: #FAF3EA;
+  --red-light: #FAEAEA;
+  --red: #8A1A1A;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+
+/* LAYOUT */
+.app { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+.header { padding: 18px 16px 0; }
+.header-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+.app-name { font-size: 22px; font-weight: 500; letter-spacing: -0.3px; color: var(--text); }
+.app-date { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+.header-btns { display: flex; gap: 6px; }
+
+/* TABS */
+.tab-bar { display: flex; border-bottom: 1px solid var(--border); padding: 0 16px; overflow-x: auto; scrollbar-width: none; }
+.tab-bar::-webkit-scrollbar { display: none; }
+.tab-btn { flex-shrink: 0; padding: 10px 12px; font-size: 13px; font-family: 'DM Sans', sans-serif; border: none; background: none; color: var(--text-3); border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer; white-space: nowrap; transition: color .15s; }
+.tab-btn.active { color: var(--text); border-bottom-color: var(--accent); font-weight: 500; }
+
+/* CONTENT */
+.content { flex: 1; padding: 14px 16px 32px; overflow-y: auto; }
+
+/* BUTTONS */
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 7px 12px; font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 400; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; transition: all .15s; white-space: nowrap; }
+.btn:hover { background: var(--bg); }
+.btn:active { transform: scale(.97); }
+.btn-primary { background: var(--text); color: #fff; border-color: var(--text); }
+.btn-primary:hover { opacity: .88; background: var(--text); }
+.btn-green { background: var(--green-light); color: var(--green); border-color: #B8DFC8; }
+.btn-red { background: var(--red-light); color: var(--red); border-color: #DFB8B8; }
+.btn-wa { background: #25D366; color: #fff; border-color: #25D366; }
+.btn-wa:hover { background: #1DB954; }
+.btn-full { width: 100%; padding: 11px 16px; font-size: 14px; border-radius: var(--radius); }
+.btn-row { display: flex; gap: 8px; margin-bottom: 12px; }
+
+/* CARDS */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 8px; overflow: hidden; box-shadow: var(--shadow); }
+.card-pad { padding: 12px 14px; }
+
+/* DAY + SEASON BARS */
+.info-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 12px; margin-bottom: 8px; font-size: 13px; color: var(--text-2); }
+.info-bar b { color: var(--text); font-weight: 500; }
+
+/* MEAL ROWS */
+.meal-section-lbl { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: .08em; color: var(--text-3); padding: 6px 14px 3px; background: var(--bg); border-bottom: 1px solid var(--border-light); }
+.meal-row { display: flex; align-items: center; gap: 8px; padding: 9px 14px; min-height: 40px; }
+.meal-row + .meal-row { border-top: 1px solid var(--border-light); }
+.dish-nm { font-size: 14px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row-actions { display: flex; gap: 5px; flex-shrink: 0; align-items: center; }
+.add-row { display: flex; gap: 5px; flex-wrap: wrap; padding: 8px 14px; border-top: 1px solid var(--border-light); background: var(--bg); }
+
+/* BADGES */
+.bdg { display: inline-block; font-size: 10px; padding: 1px 5px; border-radius: 20px; margin-left: 4px; vertical-align: middle; flex-shrink: 0; }
+.bv { background: var(--green-light); color: var(--green); }
+.bsf { background: var(--blue-light); color: var(--blue); }
+.beg { background: var(--gold-light); color: var(--gold); }
+.bnv { background: #FAEAEA; color: #7A2020; }
+.brc { background: #FAEAEA; color: #7A2020; }
+.bos { background: #F0EAF8; color: #5A2080; }
+
+/* COUNTER */
+.counter { display: flex; align-items: center; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0; }
+.cbtn { width: 28px; height: 28px; border: none; background: var(--bg); color: var(--text); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .1s; line-height: 1; }
+.cbtn:active { background: var(--border); }
+.cval { min-width: 30px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+
+/* SWAP PANEL */
+.swap-panel { background: var(--bg); border-top: 1px solid var(--border-light); padding: 10px 14px; }
+.swap-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 5px; max-height: 200px; overflow-y: auto; }
+.sopt { padding: 7px 10px; font-size: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; background: var(--surface); color: var(--text); text-align: left; transition: all .12s; font-family: 'DM Sans', sans-serif; }
+.sopt:hover { border-color: var(--accent); }
+.sopt.stale { color: var(--text-3); }
+.sopt.oos { opacity: .4; font-style: italic; }
+
+/* FORMS */
+.form-lbl { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; color: var(--text-3); margin-bottom: 5px; display: block; }
+.form-input { width: 100%; padding: 9px 12px; font-size: 14px; font-family: 'DM Sans', sans-serif; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); margin-bottom: 10px; }
+.form-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+.form-select { width: 100%; padding: 9px 12px; font-size: 14px; font-family: 'DM Sans', sans-serif; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); margin-bottom: 10px; cursor: pointer; }
+.form-textarea { resize: vertical; min-height: 90px; }
+
+/* WA BOX */
+.wa-preview { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; font-size: 12px; line-height: 1.75; white-space: pre-wrap; word-break: break-word; margin-bottom: 12px; font-family: 'DM Sans', sans-serif; color: var(--text-2); max-height: 280px; overflow-y: auto; }
+
+/* CONTACT ROW */
+.c-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 6px; background: var(--surface); }
+.c-av { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; }
+
+/* FESTIVAL CARD */
+.fest-card { border: 1px solid #D4A843; background: var(--gold-light); border-radius: var(--radius); padding: 14px; margin-bottom: 12px; }
+
+/* STATUS */
+.status-msg { font-size: 12px; color: var(--green); margin-top: 8px; min-height: 16px; }
+
+/* MENU PILLS */
+.pill { display: inline-block; padding: 4px 11px; font-size: 12px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface); color: var(--text-2); margin: 0 4px 5px 0; transition: all .12s; }
+.pill.active { background: var(--text); color: #fff; border-color: var(--text); }
+.dish-pill { display: inline-block; padding: 4px 11px; font-size: 12px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface); color: var(--text); }
+.dish-pill.oos { opacity: .38; font-style: italic; }
+.dish-pill.custom { border-color: #9B8CE0; background: #F2F0FC; color: #4A3A8A; }
+
+/* SECTION HDR */
+.sect-hdr { font-size: 12px; font-weight: 500; color: var(--text-2); margin: 16px 0 8px; }
+
+/* EMPTY */
+.empty { text-align: center; padding: 40px 16px; color: var(--text-3); }
+.empty-icon { font-size: 32px; margin-bottom: 10px; }
+.empty-lbl { font-size: 14px; }
+
+/* MARATHI FONT */
+.mr-font { font-family: 'Tiro Devanagari Marathi', serif; }
+
+/* WA TOGGLE */
+.wa-toggle { display: flex; gap: 6px; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="app-name">Aaj che Jevan 🍽</div>
+        <div class="app-date" id="hdr-date"></div>
+      </div>
+      <div class="header-btns">
+        <button class="btn" id="fest-btn" onclick="toggleFest()">Festival</button>
+        <button class="btn btn-primary" onclick="suggestAll()">Suggest</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="goTab('today',this)">Today</button>
+    <button class="tab-btn" onclick="goTab('whatsapp',this)">WhatsApp</button>
+    <button class="tab-btn" onclick="goTab('adddish',this)">+ Dish</button>
+    <button class="tab-btn" onclick="goTab('history',this)">History</button>
+    <button class="tab-btn" onclick="goTab('contacts',this)">Contacts</button>
+    <button class="tab-btn" onclick="goTab('menu',this)">Menu</button>
+  </div>
+
+  <div class="content">
+
+    <!-- TODAY -->
+    <div id="tab-today">
+      <div id="day-bar"></div>
+      <div id="season-bar"></div>
+      <div id="fest-panel" style="display:none"></div>
+      <div class="btn-row">
+        <button class="btn btn-full" onclick="suggestAll()" style="flex:1">Re-suggest</button>
+        <button class="btn btn-full btn-primary" onclick="confirmAll()" style="flex:1">Confirm all</button>
+      </div>
+      <div id="today-meals"></div>
+    </div>
+
+    <!-- WHATSAPP -->
+    <div id="tab-whatsapp" style="display:none">
+      <div class="wa-toggle">
+        <button class="btn" id="wa-cook-btn" onclick="setWAView('cook')">Cook / Housekeeper</button>
+        <button class="btn" id="wa-fam-btn" onclick="setWAView('family')">Family</button>
+      </div>
+      <div class="wa-preview mr-font" id="wa-preview"></div>
+      <div class="sect-hdr">Send to:</div>
+      <div id="wa-contacts"></div>
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn btn-full btn-wa" onclick="sendToAll()">Send to all</button>
+        <button class="btn btn-full" onclick="copyMsg()">Copy</button>
+      </div>
+      <div class="status-msg" id="wa-status"></div>
+    </div>
+
+    <!-- ADD DISH -->
+    <div id="tab-adddish" style="display:none">
+      <div class="card card-pad">
+        <label class="form-lbl">Dish name</label>
+        <input class="form-input" id="nd-name" placeholder="e.g. Kolhapuri chicken"/>
+        <label class="form-lbl">Marathi name (for cook's message)</label>
+        <input class="form-input" id="nd-marathi" placeholder="e.g. कोल्हापुरी चिकन"/>
+        <label class="form-lbl">Category</label>
+        <select class="form-select" id="nd-cat">
+          <option value="breakfast_veg">Breakfast – veg</option>
+          <option value="breakfast_egg">Breakfast – egg</option>
+          <option value="seafood">Seafood</option>
+          <option value="chicken">Chicken</option>
+          <option value="mutton">Mutton</option>
+          <option value="sabzi">Sabzi</option>
+          <option value="dal">Dal / usal / kadhi</option>
+          <option value="rice">Rice</option>
+          <option value="bhakri">Bhakri</option>
+          <option value="snacks">Snacks</option>
+        </select>
+        <label class="form-lbl">Meal time</label>
+        <select class="form-select" id="nd-meal">
+          <option value="breakfast">Breakfast only</option>
+          <option value="lunch">Lunch only</option>
+          <option value="dinner">Dinner only</option>
+          <option value="both">Both (lunch & dinner)</option>
+        </select>
+        <label class="form-lbl">Season</label>
+        <select class="form-select" id="nd-season">
+          <option value="all">All year</option>
+          <option value="monsoon">Monsoon only (Jun–Sep)</option>
+          <option value="winter">Winter only (Oct–Feb)</option>
+          <option value="summer">Summer only (Mar–May)</option>
+        </select>
+        <label class="form-lbl">YouTube link (cook only, optional)</label>
+        <input class="form-input" id="nd-yt" placeholder="https://youtube.com/..."/>
+        <label class="form-lbl">Notes for cook (optional)</label>
+        <input class="form-input" id="nd-notes" placeholder="e.g. marinate overnight"/>
+        <button class="btn btn-full btn-primary" onclick="addDish()">Add to menu</button>
+        <div class="status-msg" id="add-status"></div>
+      </div>
+      <div class="sect-hdr">Custom dishes</div>
+      <div id="custom-list"></div>
+    </div>
+
+    <!-- HISTORY -->
+    <div id="tab-history" style="display:none"><div id="history-list"></div></div>
+
+    <!-- CONTACTS -->
+    <div id="tab-contacts" style="display:none">
+      <div id="contacts-list"></div>
+      <div class="card card-pad" style="margin-top:12px">
+        <div class="sect-hdr" style="margin-top:0">Add contact</div>
+        <label class="form-lbl">Name</label>
+        <input class="form-input" id="new-name" placeholder="Name"/>
+        <label class="form-lbl">WhatsApp number (with country code)</label>
+        <input class="form-input" id="new-phone" placeholder="e.g. 919820001234"/>
+        <label class="form-lbl">Role</label>
+        <select class="form-select" id="new-role">
+          <option value="family">Family</option>
+          <option value="cook">Cook</option>
+          <option value="housekeeper">Housekeeper</option>
+        </select>
+        <button class="btn btn-primary" onclick="addContact()">Add contact</button>
+      </div>
+    </div>
+
+    <!-- MENU -->
+    <div id="tab-menu" style="display:none">
+      <div style="margin-bottom:10px;line-height:2" id="menu-filters"></div>
+      <div style="font-size:11px;color:var(--text-3);margin-bottom:10px">Out-of-season dishes shown in <em style="opacity:.5">italic</em> · hover for meal time</div>
+      <div id="menu-content"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── SEASON ──────────────────────────────────────────────────────────
+const SM={monsoon:[5,6,7,8],winter:[9,10,11,0,1],summer:[2,3,4]};
+function getSeason(){const m=new Date().getMonth();for(const[s,ms]of Object.entries(SM))if(ms.includes(m))return s;return'monsoon';}
+const CS=getSeason();
+const SL={monsoon:'🌧 Monsoon',winter:'❄️ Winter',summer:'☀️ Summer'};
+
+// ── DISHES ──────────────────────────────────────────────────────────
+const ALL=[
+  {n:"Egg sunny side up",pool:"breakfast_egg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"egg"},
+  {n:"Egg omelette",pool:"breakfast_egg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"egg"},
+  {n:"Egg bhurji toast",pool:"breakfast_egg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"egg"},
+  {n:"Tomato omelette",pool:"breakfast_egg",meal:"lunch",seasons:["monsoon","winter","summer"],t:"egg"},
+  {n:"Scrambled eggs",pool:"breakfast_egg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"egg"},
+  {n:"Eggs half fry",pool:"breakfast_egg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"egg"},
+  {n:"French toast",pool:"breakfast_egg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"egg"},
+  {n:"Ghavan chutney",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Chutney sandwich",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Oats upma",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Muli paratha",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Methi paratha",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Aloo paratha",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Gobi paratha",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Paneer paratha",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Takaat le pole",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Idli",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Rawa idli",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Medu wada",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Uttapam",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Dosa",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Pohe",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Shira",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Upma",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Veg sandwich",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Pancakes",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Sabudana wada",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Sabudana khichdi",pool:"breakfast_veg",meal:"breakfast",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Cutlets",pool:"snacks",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Pav bhaji",pool:"snacks",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Batata vada",pool:"snacks",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Chole bature",pool:"snacks",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Paani poori",pool:"snacks",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Sev puri",pool:"snacks",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Bhel",pool:"snacks",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Ragda pattice",pool:"snacks",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Pizza",pool:"snacks",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Pasta arabiata",pool:"snacks",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Pasta white sauce",pool:"snacks",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Samosas",pool:"snacks",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"American chopsuey",pool:"snacks",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Veg wraps",pool:"snacks",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Chicken wraps",pool:"snacks",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Mutton wraps",pool:"snacks",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Chicken kebab wraps",pool:"snacks",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Pomfret fry with curry",pool:"seafood",meal:"both",seasons:["monsoon","winter","summer"],t:"sea"},
+  {n:"Bharlele pomfret",pool:"seafood",meal:"dinner",seasons:["monsoon","winter","summer"],t:"sea"},
+  {n:"Halwa fry with curry",pool:"seafood",meal:"both",seasons:["monsoon","winter","summer"],t:"sea"},
+  {n:"Rawa fry with curry",pool:"seafood",meal:"both",seasons:["monsoon","winter","summer"],t:"sea"},
+  {n:"Bombil fry with curry",pool:"seafood",meal:"both",seasons:["monsoon","winter","summer"],t:"sea"},
+  {n:"Bombil ambat tikhat",pool:"seafood",meal:"dinner",seasons:["monsoon","winter","summer"],t:"sea"},
+  {n:"Kolambi masala",pool:"seafood",meal:"both",seasons:["monsoon","winter","summer"],t:"sea"},
+  {n:"Kolambi curry",pool:"seafood",meal:"both",seasons:["monsoon","winter","summer"],t:"sea"},
+  {n:"Kadai kolambi",pool:"seafood",meal:"both",seasons:["monsoon","winter","summer"],t:"sea"},
+  {n:"Kolambi fry",pool:"seafood",meal:"dinner",seasons:["monsoon","winter","summer"],t:"sea"},
+  {n:"Tisrya masala",pool:"seafood",meal:"dinner",seasons:["monsoon","winter","summer"],t:"sea"},
+  {n:"Ghol fry with curry",pool:"seafood",meal:"dinner",seasons:["winter"],t:"sea"},
+  {n:"Gholicha kata",pool:"seafood",meal:"dinner",seasons:["winter"],t:"sea"},
+  {n:"Mandeli fry with curry",pool:"seafood",meal:"dinner",seasons:["monsoon","winter","summer"],t:"sea"},
+  {n:"Crab curry",pool:"seafood",meal:"both",seasons:["monsoon","winter","summer"],t:"sea"},
+  {n:"Chutney paplet",pool:"seafood",meal:"dinner",seasons:["monsoon","winter","summer"],t:"sea"},
+  {n:"Gaboli fry",pool:"seafood",meal:"dinner",seasons:["monsoon","winter","summer"],t:"sea"},
+  {n:"Chicken ghee roast",pool:"chicken",meal:"lunch",seasons:["monsoon","winter","summer"],t:"chicken"},
+  {n:"Butter chicken",pool:"chicken",meal:"both",seasons:["monsoon","winter","summer"],t:"chicken"},
+  {n:"Sukha chicken",pool:"chicken",meal:"both",seasons:["monsoon","winter","summer"],t:"chicken"},
+  {n:"Chicken kheema",pool:"chicken",meal:"both",seasons:["monsoon","winter","summer"],t:"chicken"},
+  {n:"Chicken kebabs",pool:"chicken",meal:"both",seasons:["monsoon","winter","summer"],t:"chicken"},
+  {n:"Chicken Kaleji",pool:"chicken",meal:"both",seasons:["monsoon","winter","summer"],t:"chicken"},
+  {n:"Mutton curry",pool:"mutton",meal:"both",seasons:["monsoon","winter","summer"],t:"mutton"},
+  {n:"Mutton ghee roast",pool:"mutton",meal:"both",seasons:["monsoon","winter","summer"],t:"mutton"},
+  {n:"Sukha mutton",pool:"mutton",meal:"both",seasons:["monsoon","winter","summer"],t:"mutton"},
+  {n:"Mutton kheema",pool:"mutton",meal:"both",seasons:["monsoon","winter","summer"],t:"mutton"},
+  {n:"Tamba rassa",pool:"mutton",meal:"both",seasons:["monsoon","winter","summer"],t:"mutton"},
+  {n:"Pandhra rassa",pool:"mutton",meal:"both",seasons:["monsoon","winter","summer"],t:"mutton"},
+  {n:"Kaleji",pool:"mutton",meal:"both",seasons:["monsoon","winter","summer"],t:"mutton"},
+  {n:"Mutton Kaleji",pool:"mutton",meal:"both",seasons:["monsoon","winter","summer"],t:"mutton"},
+  {n:"Egg masala",pool:"egg_main",meal:"lunch",seasons:["monsoon","winter","summer"],t:"egg"},
+  {n:"Boiled egg with masala",pool:"egg_main",meal:"lunch",seasons:["monsoon","winter","summer"],t:"egg"},
+  {n:"Dal daliya",pool:"sabzi",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Dum aloo",pool:"sabzi",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Palak paneer",pool:"sabzi",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Paneer mutter",pool:"sabzi",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Pakoda kadi",pool:"sabzi",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Bhendichi bhaji",pool:"sabzi",meal:"lunch",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Bharleli bhendi",pool:"sabzi",meal:"lunch",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Cauliflower vatana batata",pool:"sabzi",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Green vatana suki bhaji",pool:"sabzi",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Cabbage bhaji",pool:"sabzi",meal:"lunch",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Tondlichi bhaji",pool:"sabzi",meal:"lunch",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Bharleli tondli",pool:"sabzi",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Gawar chi bhaji",pool:"sabzi",meal:"lunch",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"French beans bhaji",pool:"sabzi",meal:"lunch",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Vangyachi bhaji",pool:"sabzi",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Bharleli vangi",pool:"sabzi",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Dudhi daal bhaji",pool:"sabzi",meal:"lunch",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Vaal padwal bhaji",pool:"sabzi",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Shirale chi bhaji",pool:"sabzi",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Ghosale chi bhaji",pool:"sabzi",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Fanasachi bhaji",pool:"sabzi",meal:"both",seasons:["summer"],t:"veg"},
+  {n:"Batata kaachra",pool:"sabzi",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Kelfulachi bhaji",pool:"sabzi",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Sev tomato bhaji",pool:"sabzi",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Gathyachi bhaji",pool:"sabzi",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Shimla mirchi besan",pool:"sabzi",meal:"lunch",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Zunka bhakri",pool:"sabzi",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Rishi chi bhaji",pool:"sabzi",meal:"lunch",seasons:["monsoon"],t:"veg"},
+  {n:"Mushroom bhaji",pool:"sabzi",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Sauté vegetables",pool:"sabzi",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Thaap vadi",pool:"sabzi",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Chanyachya pithacha pola",pool:"sabzi",meal:"lunch",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Daalichi amti",pool:"dal",meal:"lunch",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Daalichi tikhat amti",pool:"dal",meal:"lunch",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Kokam kadhi",pool:"dal",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Taakachi kadhi",pool:"dal",meal:"lunch",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Pakoda kadi",pool:"dal",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Matkichi usal",pool:"dal",meal:"lunch",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Moogachi usal",pool:"dal",meal:"lunch",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Moogachi kadhan usal",pool:"dal",meal:"lunch",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Chawli batata usal",pool:"dal",meal:"lunch",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Kala vatana kaju usal",pool:"dal",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Kala vatana suran usal",pool:"dal",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Masoor",pool:"dal",meal:"lunch",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Pawte chi usal",pool:"dal",meal:"lunch",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Pawte che kadhan",pool:"dal",meal:"lunch",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Vaalachi usal",pool:"dal",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Vangyache bharith",pool:"dal",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Bhoplyache bharith",pool:"dal",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Steam rice",pool:"rice",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Pulav",pool:"rice",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Jeera rice",pool:"rice",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Khichdi",pool:"rice",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Khichdi with vaal",pool:"rice",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Masale bhaat",pool:"rice",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Phodnicha bhaat",pool:"rice",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Fried rice",pool:"rice",meal:"dinner",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Mutton biryani",pool:"rice",meal:"dinner",seasons:["monsoon","winter","summer"],t:"mutton"},
+  {n:"Chicken biryani",pool:"rice",meal:"dinner",seasons:["monsoon","winter","summer"],t:"chicken"},
+  {n:"Prawns biryani",pool:"rice",meal:"dinner",seasons:["monsoon","winter","summer"],t:"sea"},
+  {n:"Prawns pulav",pool:"rice",meal:"dinner",seasons:["monsoon","winter","summer"],t:"sea"},
+  {n:"Jwaari bhakri",pool:"bhakri",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Naachani bhakri",pool:"bhakri",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Bajra bhakri",pool:"bhakri",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+  {n:"Tandool bhakri",pool:"bhakri",meal:"both",seasons:["monsoon","winter","summer"],t:"veg"},
+];
+
+const MR={"Egg sunny side up":"एग सनी साइड अप","Egg omelette":"एग ऑम्लेट","Egg bhurji toast":"एग भुर्जी टोस्ट","Tomato omelette":"टोमॅटो ऑम्लेट","Scrambled eggs":"स्क्रॅम्बल्ड एग","Eggs half fry":"एग हाफ फ्राय","French toast":"फ्रेंच टोस्ट","Ghavan chutney":"घावन चटणी","Chutney sandwich":"चटणी सँडविच","Oats upma":"ओट्स उपमा","Muli paratha":"मुळा पराठा","Methi paratha":"मेथी पराठा","Aloo paratha":"बटाटा पराठा","Gobi paratha":"फुलकोबी पराठा","Paneer paratha":"पनीर पराठा","Takaat le pole":"ताकातले पोळे","Idli":"इडली","Rawa idli":"रवा इडली","Medu wada":"मेदू वडा","Uttapam":"उत्तपम","Dosa":"डोसा","Pohe":"पोहे","Shira":"शिरा","Upma":"उपमा","Veg sandwich":"व्हेज सँडविच","Pancakes":"पॅनकेक","Sabudana wada":"साबुदाणा वडा","Sabudana khichdi":"साबुदाणा खिचडी","Cutlets":"कटलेट","Pomfret fry with curry":"पापलेट फ्राय व कालवण","Bharlele pomfret":"भरलेले पापलेट","Halwa fry with curry":"हलवा फ्राय व कालवण","Rawa fry with curry":"रवा फ्राय व कालवण","Bombil fry with curry":"बोंबील फ्राय व कालवण","Bombil ambat tikhat":"बोंबील आंबट तिखट","Kolambi masala":"कोळंबी मसाला","Kolambi curry":"कोळंबी कालवण","Kadai kolambi":"कढई कोळंबी","Kolambi fry":"कोळंबी फ्राय","Tisrya masala":"तिसऱ्या मसाला","Ghol fry with curry":"घोळ फ्राय व कालवण","Gholicha kata":"घोळाचा काटा","Mandeli fry with curry":"मांदेली फ्राय व कालवण","Crab curry":"खेकडा कालवण","Chutney paplet":"चटणी पापलेट","Gaboli fry":"गाबोळी फ्राय","Chicken ghee roast":"चिकन घी रोस्ट","Butter chicken":"बटर चिकन","Sukha chicken":"सुका चिकन","Chicken kheema":"चिकन कीमा","Chicken kebabs":"चिकन कबाब","Chicken Kaleji":"चिकन कलेजी","Mutton curry":"मटण कालवण","Mutton ghee roast":"मटण घी रोस्ट","Sukha mutton":"सुका मटण","Mutton kheema":"मटण कीमा","Tamba rassa":"तांबडा रस्सा","Pandhra rassa":"पांढरा रस्सा","Kaleji":"कलेजी","Mutton Kaleji":"मटण कलेजी","Egg masala":"एग मसाला","Boiled egg with masala":"उकडलेले अंडे मसाला","Dal daliya":"डाळ दलिया","Dum aloo":"दम बटाटा","Palak paneer":"पालक पनीर","Paneer mutter":"पनीर मटर","Pakoda kadi":"पकोडा कढी","Bhendichi bhaji":"भेंडीची भाजी","Bharleli bhendi":"भरलेली भेंडी","Cauliflower vatana batata":"फुलकोबी वाटाणा बटाटा","Green vatana suki bhaji":"हिरवी वाटाणा सुकी भाजी","Cabbage bhaji":"कोबीची भाजी","Tondlichi bhaji":"तोंडलीची भाजी","Bharleli tondli":"भरलेली तोंडली","Gawar chi bhaji":"गवारची भाजी","French beans bhaji":"फ्रेंच बीन्स भाजी","Vangyachi bhaji":"वांग्याची भाजी","Bharleli vangi":"भरलेली वांगी","Dudhi daal bhaji":"दुधी डाळ भाजी","Vaal padwal bhaji":"वाल पडवळ भाजी","Shirale chi bhaji":"शिराळ्याची भाजी","Ghosale chi bhaji":"घोसाळ्याची भाजी","Fanasachi bhaji":"फणसाची भाजी","Batata kaachra":"बटाट्याचे काचरे","Kelfulachi bhaji":"केळफुलाची भाजी","Sev tomato bhaji":"शेव टोमॅटो भाजी","Gathyachi bhaji":"गाठ्याची भाजी","Shimla mirchi besan":"शिमला मिरची बेसण","Zunka bhakri":"झुणका भाकरी","Rishi chi bhaji":"ऋषीची भाजी","Mushroom bhaji":"मशरूम भाजी","Sauté vegetables":"साधी भाजी","Thaap vadi":"थापवडी","Chanyachya pithacha pola":"चण्याच्या पिठाचा पोळा","Daalichi amti":"डाळीची आमटी","Daalichi tikhat amti":"डाळीची तिखट आमटी","Kokam kadhi":"कोकम कढी","Taakachi kadhi":"ताकाची कढी","Matkichi usal":"मटकीची उसळ","Moogachi usal":"मुगाची उसळ","Moogachi kadhan usal":"मुगाची कढण उसळ","Chawli batata usal":"चवळी बटाटा उसळ","Kala vatana kaju usal":"काळे वाटाणे काजू उसळ","Kala vatana suran usal":"काळे वाटाणे सुरण उसळ","Masoor":"मसूर","Pawte chi usal":"पावट्याची उसळ","Pawte che kadhan":"पावट्याचे कढण","Vaalachi usal":"वालाची उसळ","Vangyache bharith":"वांग्याचे भरीत","Bhoplyache bharith":"भोपळ्याचे भरीत","Steam rice":"वाफाळलेला भात","Pulav":"पुलाव","Jeera rice":"जिरा भात","Khichdi":"खिचडी","Khichdi with vaal":"वालाची खिचडी","Masale bhaat":"मसाले भात","Phodnicha bhaat":"फोडणीचा भात","Fried rice":"फ्राइड राइस","Mutton biryani":"मटण बिर्याणी","Chicken biryani":"चिकन बिर्याणी","Prawns biryani":"कोळंबी बिर्याणी","Prawns pulav":"कोळंबी पुलाव","Jwaari bhakri":"ज्वारी भाकरी","Naachani bhakri":"नाचणी भाकरी","Bajra bhakri":"बाजरी भाकरी","Tandool bhakri":"तांदूळ भाकरी","Pav bhaji":"पाव भाजी","Batata vada":"बटाटा वडा","Chole bature":"छोले भटुरे","Paani poori":"पाणी पुरी","Sev puri":"शेव पुरी","Bhel":"भेळ","Ragda pattice":"रगडा पॅटिस","Pizza":"पिझ्झा","Pasta arabiata":"पास्ता अरबियाता","Pasta white sauce":"पास्ता व्हाइट सॉस","Samosas":"समोसे","American chopsuey":"अमेरिकन चॉपसुई","Veg wraps":"व्हेज रॅप","Chicken wraps":"चिकन रॅप","Mutton wraps":"मटण रॅप","Chicken kebab wraps":"चिकन कबाब रॅप","Chapati":"चपाती"};
+function tmr(n){return MR[n]||n;}
+
+const DR={
+  0:{label:'Sunday',note:'Eggs for breakfast · Same mutton for lunch & dinner',bf:'eggs',lu:'mutton_only',di:'mutton_only'},
+  1:{label:'Monday',note:'Full vegetarian day',bf:'veg',lu:'veg',di:'veg'},
+  2:{label:'Tuesday',note:'Non-veg lunch & dinner — prefer seafood',bf:'any',lu:'nonveg',di:'nonveg'},
+  3:{label:'Wednesday',note:'Non-veg lunch & dinner — prefer seafood',bf:'any',lu:'nonveg',di:'nonveg'},
+  4:{label:'Thursday',note:'Full vegetarian day',bf:'veg',lu:'veg',di:'veg'},
+  5:{label:'Friday',note:'Non-veg lunch & dinner — prefer seafood',bf:'any',lu:'nonveg',di:'nonveg'},
+  6:{label:'Saturday',note:'Veg lunch · Non-veg dinner',bf:'any',lu:'veg',di:'nonveg'},
+};
+const DAYS_MR=['रविवार','सोमवार','मंगळवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'];
+const MON_MR=['जानेवारी','फेब्रुवारी','मार्च','एप्रिल','मे','जून','जुलै','ऑगस्ट','सप्टेंबर','ऑक्टोबर','नोव्हेंबर','डिसेंबर'];
+
+// ── STATE ────────────────────────────────────────────────────────────
+const SK='acj_v1';
+let S=load();let swapOpen=null;let festOpen=false;let waView='cook';let mf='all';
+
+function load(){try{const r=localStorage.getItem(SK);if(r)return JSON.parse(r);}catch(e){}
+  return{today:{},history:[],customDishes:[],festivalMeals:null,contacts:[
+    {id:'cook',name:'Cook',phone:'',role:'cook',color:'#E8F4ED',tc:'#1A5C33'},
+    {id:'housekeeper',name:'Housekeeper',phone:'',role:'housekeeper',color:'#E8EFF8',tc:'#1A3A6A'},
+    {id:'self',name:'You',phone:'',role:'family',color:'#F0EEF8',tc:'#3A2A7A'},
+    {id:'shilpa',name:'Shilpa',phone:'',role:'family',color:'#F8EEF2',tc:'#6A1A3A'},
+    {id:'aditya',name:'Aditya',phone:'',role:'family',color:'#F8F2EA',tc:'#6A4A1A'},
+  ]};}
+function save(){try{localStorage.setItem(SK,JSON.stringify(S));}catch(e){}}
+
+// ── HELPERS ──────────────────────────────────────────────────────────
+function inSeason(d){return d.seasons.includes(CS);}
+function getPool(pool,ms){
+  const custom=(S.customDishes||[]).map(cd=>({n:cd.name,pool:cd.cat,meal:cd.meal,seasons:cd.seasons||['monsoon','winter','summer'],t:cd.type}));
+  return [...ALL,...custom].filter(d=>{
+    if(d.pool!==pool)return false;
+    if(ms==='lunch')return d.meal==='lunch'||d.meal==='both';
+    if(ms==='dinner')return d.meal==='dinner'||d.meal==='both';
+    if(ms==='breakfast')return d.meal==='breakfast'||d.meal==='lunch';
+    return true;
+  });
+}
+function getRecent(){const u=new Set();S.history.slice(-7).forEach(d=>{Object.values(d.meals||{}).forEach(v=>{if(typeof v==='string')u.add(v);});});return u;}
+function getChickenWk(){let c=0;S.history.slice(-7).forEach(d=>{Object.values(d.meals||{}).forEach(v=>{if(ALL.find(x=>x.n===v&&x.pool==='chicken'))c++;});});return c;}
+function pick(pool,ms,ex=new Set()){
+  const arr=getPool(pool,ms);
+  const inS=arr.filter(d=>inSeason(d)&&!ex.has(d.n));
+  const fb=arr.filter(d=>!ex.has(d.n));
+  const src=inS.length?inS:fb.length?fb:arr;
+  return src[Math.floor(Math.random()*src.length)]||null;
+}
+function pickNV(ms,ex){
+  const sp=getPool('seafood',ms).filter(d=>inSeason(d)&&!ex.has(d.n));
+  const cp=getPool('chicken',ms).filter(d=>inSeason(d)&&!ex.has(d.n));
+  const mp=getPool('mutton',ms).filter(d=>inSeason(d)&&!ex.has(d.n));
+  const cc=getChickenWk();const r=Math.random();
+  if(r<.70&&sp.length)return sp[Math.floor(Math.random()*sp.length)];
+  if(r<.80&&cc<2&&cp.length)return cp[Math.floor(Math.random()*cp.length)];
+  if(mp.length)return mp[Math.floor(Math.random()*mp.length)];
+  return sp[0]||null;
+}
+
+// ── SUGGEST ──────────────────────────────────────────────────────────
+function suggestAll(){
+  const dow=new Date().getDay();const rule=DR[dow];
+  const recent=getRecent();const ex=new Set(recent);const T={};
+  const bfp=rule.bf==='eggs'?'breakfast_egg':rule.bf==='veg'?'breakfast_veg':(Math.random()<.3?'breakfast_egg':'breakfast_veg');
+  const bd=pick(bfp,'breakfast',ex);
+  if(bd){T.bf={n:bd.n,t:bd.t,pool:bfp,confirmed:false};ex.add(bd.n);}
+  function fillMeal(p,isNV){
+    let main=null;
+    if(isNV){main=pickNV(p,ex);}
+    else{const arr=getPool('sabzi',p).filter(d=>inSeason(d)&&!ex.has(d.n));if(arr.length)main=arr[Math.floor(Math.random()*arr.length)];}
+    if(main){T[p+'_main']={n:main.n,t:main.t,pool:main.pool||'sabzi',confirmed:false};ex.add(main.n);}
+    if(p==='lu'){const d=pick('dal','lunch',ex);if(d){T[p+'_dal']={n:d.n,t:d.t,pool:'dal',confirmed:false};ex.add(d.n);}}
+    if(Math.random()>.35){const r=pick('rice',p,ex);if(r){T[p+'_rice']={n:r.n,t:r.t,pool:'rice',confirmed:false};ex.add(r.n);}}
+    if(Math.random()>.5){const b=pick('bhakri',p,new Set());if(b)T[p+'_bhakri']={n:b.n,t:'veg',count:Math.floor(Math.random()*2)+2,pool:'bhakri'};}
+    if(Math.random()>.5)T[p+'_chapati']={count:Math.floor(Math.random()*3)+3};
+  }
+  if(rule.lu==='mutton_only'){
+    const md=pick('mutton','lunch',ex);
+    if(md){
+      ex.add(md.n);
+      T.lu_main={n:md.n,t:'mutton',pool:'mutton',confirmed:false};
+      T.di_main={n:md.n,t:'mutton',pool:'mutton',confirmed:false,sameAsLunch:true};
+      const dd=pick('dal','lunch',ex);if(dd){T.lu_dal={n:dd.n,t:dd.t,pool:'dal',confirmed:false};ex.add(dd.n);}
+      const rd=pick('rice','lunch',ex);if(rd){T.lu_rice={n:rd.n,t:rd.t,pool:'rice',confirmed:false};}
+      T.lu_chapati={count:4};T.di_chapati={count:4};
+    }
+  } else {fillMeal('lu',rule.lu==='nonveg');fillMeal('di',rule.di==='nonveg');}
+  S.today=T;S.festivalMeals=null;save();swapOpen=null;festOpen=false;
+  document.getElementById('fest-panel').style.display='none';
+  document.getElementById('fest-btn').textContent='Festival';
+  renderToday();
+}
+
+// ── BADGES ───────────────────────────────────────────────────────────
+function tb(t){
+  if(t==='veg')return '<span class="bdg bv">v</span>';
+  if(t==='sea')return '<span class="bdg bsf">sf</span>';
+  if(t==='egg')return '<span class="bdg beg">eg</span>';
+  return `<span class="bdg bnv">${t.slice(0,2)}</span>`;
+}
+
+// ── SWAP PANEL ───────────────────────────────────────────────────────
+function swapHTML(id,pool,ms){
+  const arr=getPool(pool,ms);const recent=getRecent();
+  const inS=arr.filter(d=>inSeason(d));const outS=arr.filter(d=>!inSeason(d));
+  return `<div class="swap-panel"><div class="swap-grid">
+    ${inS.map(d=>`<button class="sopt${recent.has(d.n)?' stale':''}" onclick="doSwap('${id}','${d.n.replace(/'/g,"\\'")}','${d.t}','${pool}')">${d.n}</button>`).join('')}
+    ${outS.map(d=>`<button class="sopt oos" onclick="doSwap('${id}','${d.n.replace(/'/g,"\\'")}','${d.t}','${pool}')" title="Out of season">${d.n}</button>`).join('')}
+  </div></div>`;
+}
+
+// ── RENDER MEAL ROWS ─────────────────────────────────────────────────
+function renderMealRows(p,recent,ms){
+  const T=S.today;
+  const main=T[p+'_main'],dal=T[p+'_dal'],rice=T[p+'_rice'],bhakri=T[p+'_bhakri'],chapati=T[p+'_chapati'];
+  if(!main)return '';let h='';
+  function row(id,name,type,pool,removable,confirmed){
+    const rec=recent.has(name);const dish=ALL.find(d=>d.n===name);const oos=dish&&!inSeason(dish);
+    return `<div class="meal-row">
+      <span class="dish-nm">${name}${tb(type)}${rec&&!confirmed?'<span class="bdg brc">↩</span>':''}${oos?'<span class="bdg bos">off-season</span>':''}</span>
+      <div class="row-actions">
+        ${removable?`<button class="btn btn-red" onclick="del('${id}')">✕</button>`:''}
+        ${!confirmed&&!(main.sameAsLunch&&id===p+'_main')?`<button class="btn" onclick="openSwap('${id}','${pool}','${ms}')">swap</button>`:''}
+        ${!confirmed?`<button class="btn btn-green" onclick="cSlot('${id}')">✓</button>`:'<span style="font-size:12px;color:var(--green);font-weight:500">✓</span>'}
+      </div>
+    </div>`;
+  }
+  h+=row(p+'_main',main.n,main.t,main.pool,false,main.confirmed);
+  if(swapOpen===p+'_main')h+=swapHTML(p+'_main',main.pool,ms);
+  if(ms==='lunch'&&dal){h+=row(p+'_dal',dal.n,dal.t,'dal',true,dal.confirmed);if(swapOpen===p+'_dal')h+=swapHTML(p+'_dal','dal','lunch');}
+  if(rice){h+=row(p+'_rice',rice.n,rice.t,'rice',true,rice.confirmed);if(swapOpen===p+'_rice')h+=swapHTML(p+'_rice','rice',ms);}
+  if(bhakri&&bhakri.n){
+    h+=`<div class="meal-row"><span class="dish-nm">${bhakri.n}<span class="bdg bv">v</span></span>
+      <div class="row-actions">
+        <div class="counter"><button class="cbtn" onclick="chBhakri(-1,'${p}')">−</button><div class="cval">${bhakri.count}</div><button class="cbtn" onclick="chBhakri(1,'${p}')">+</button></div>
+        <button class="btn" onclick="openSwap('${p}_bhakri','bhakri','${ms}')">swap</button>
+        <button class="btn btn-red" onclick="delBhakri('${p}')">✕</button>
+      </div></div>`;
+    if(swapOpen===p+'_bhakri')h+=swapHTML(p+'_bhakri','bhakri',ms);
+  }
+  if(chapati&&chapati.count>0){
+    h+=`<div class="meal-row"><span class="dish-nm">Chapati<span class="bdg bv">v</span></span>
+      <div class="row-actions">
+        <div class="counter"><button class="cbtn" onclick="chChapati(-1,'${p}')">−</button><div class="cval">${chapati.count}</div><button class="cbtn" onclick="chChapati(1,'${p}')">+</button></div>
+        <button class="btn btn-red" onclick="delChapati('${p}')">✕</button>
+      </div></div>`;
+  }
+  const missing=[];
+  if(ms==='lunch'&&!dal)missing.push(`<button class="btn" onclick="addDal('${p}')">+ dal</button>`);
+  if(!rice)missing.push(`<button class="btn" onclick="addRice('${p}','${ms}')">+ rice</button>`);
+  if(!bhakri||!bhakri.n)missing.push(`<button class="btn" onclick="openSwap('${p}_bhakri','bhakri','${ms}')">+ bhakri</button>`);
+  if(!chapati||chapati.count===0)missing.push(`<button class="btn" onclick="addChapati('${p}')">+ chapati</button>`);
+  if(swapOpen===p+'_bhakri'&&(!bhakri||!bhakri.n))h+=swapHTML(p+'_bhakri','bhakri',ms);
+  if(missing.length)h+=`<div class="add-row">${missing.join('')}</div>`;
+  return h;
+}
+
+// ── RENDER TODAY ─────────────────────────────────────────────────────
+function renderToday(){
+  const c=document.getElementById('today-meals');
+  const dow=new Date().getDay();const rule=DR[dow];
+  document.getElementById('day-bar').innerHTML=`<div class="info-bar"><b>${rule.label}:</b> ${rule.note}</div>`;
+  document.getElementById('season-bar').innerHTML=`<div class="info-bar">${SL[CS]} · Out-of-season dishes skipped in suggestions</div>`;
+  if(S.festivalMeals){
+    c.innerHTML=`<div class="card card-pad" style="border-color:#D4A843;background:var(--gold-light)"><div style="font-size:13px;font-weight:500;color:var(--gold);margin-bottom:5px">Festival: ${S.festivalMeals.name}</div><div style="font-size:13px;white-space:pre-line;color:var(--text-2)">${S.festivalMeals.dishes}</div></div>`;
+    return;
+  }
+  if(!S.today||!S.today.bf){
+    c.innerHTML=`<div class="empty"><div class="empty-icon">🍽</div><div class="empty-lbl">Tap Suggest to get today's meals</div></div>`;
+    return;
+  }
+  const T=S.today;const recent=getRecent();const bf=T.bf;
+  let html='';
+  html+=`<div class="card"><div class="meal-section-lbl">Breakfast · 8:00 AM</div>
+    <div class="meal-row">
+      <span class="dish-nm">${bf.n}${tb(bf.t)}${recent.has(bf.n)&&!bf.confirmed?'<span class="bdg brc">↩</span>':''}</span>
+      <div class="row-actions">
+        ${!bf.confirmed?`<button class="btn" onclick="openSwap('bf','${bf.pool}','breakfast')">swap</button>`:''}
+        ${!bf.confirmed?`<button class="btn btn-green" onclick="cSlot('bf')">✓</button>`:'<span style="font-size:12px;color:var(--green);font-weight:500">✓</span>'}
+      </div>
+    </div>${swapOpen==='bf'?swapHTML('bf',bf.pool,'breakfast'):''}
+  </div>`;
+  html+=`<div class="card"><div class="meal-section-lbl">Lunch · 12:30 PM</div>${renderMealRows('lu',recent,'lunch')}</div>`;
+  html+=`<div class="card"><div class="meal-section-lbl">Dinner · 7:30 PM</div>${renderMealRows('di',recent,'dinner')}</div>`;
+  c.innerHTML=html;
+}
+
+function openSwap(id,pool,ms){swapOpen=swapOpen===id?null:id;renderToday();}
+function cSlot(id){if(S.today[id])S.today[id].confirmed=true;save();renderToday();}
+function doSwap(id,name,type,pool){
+  if(id.endsWith('_bhakri')){const p=id.replace('_bhakri','');S.today[p+'_bhakri']={n:name,t:type,count:S.today[p+'_bhakri']?.count||2,pool:'bhakri'};}
+  else S.today[id]={n:name,t:type,pool,confirmed:false};
+  swapOpen=null;save();renderToday();
+}
+function del(id){delete S.today[id];swapOpen=null;save();renderToday();}
+function addRice(p,ms){const d=pick('rice',ms,new Set());if(d){S.today[p+'_rice']={n:d.n,t:d.t,pool:'rice',confirmed:false};save();renderToday();}}
+function addDal(p){const d=pick('dal','lunch',new Set());if(d){S.today[p+'_dal']={n:d.n,t:d.t,pool:'dal',confirmed:false};save();renderToday();}}
+function addChapati(p){S.today[p+'_chapati']={count:4};save();renderToday();}
+function delBhakri(p){delete S.today[p+'_bhakri'];swapOpen=null;save();renderToday();}
+function delChapati(p){delete S.today[p+'_chapati'];save();renderToday();}
+function chBhakri(d,p){const b=S.today[p+'_bhakri'];if(b){b.count=Math.max(0,Math.min(20,b.count+d));if(b.count===0)delBhakri(p);else{save();renderToday();}}}
+function chChapati(d,p){const ch=S.today[p+'_chapati'];if(ch){ch.count=Math.max(0,Math.min(30,ch.count+d));if(ch.count===0)delChapati(p);else{save();renderToday();}}}
+function confirmAll(){['bf','lu_main','lu_dal','lu_rice','di_main','di_rice'].forEach(k=>{if(S.today[k])S.today[k].confirmed=true;});save();renderToday();}
+function toggleFest(){
+  festOpen=!festOpen;
+  document.getElementById('fest-btn').textContent=festOpen?'Cancel':'Festival';
+  const fp=document.getElementById('fest-panel');
+  fp.style.display=festOpen?'block':'none';
+  if(festOpen)fp.innerHTML=`<div class="fest-card">
+    <div style="font-size:13px;font-weight:500;color:var(--gold);margin-bottom:8px">Festival / special day</div>
+    <label class="form-lbl">Festival name</label><input class="form-input" id="fest-name" placeholder="e.g. Ganesh Chaturthi"/>
+    <label class="form-lbl">Dishes (one per line)</label><textarea class="form-input form-textarea" id="fest-dishes" placeholder="Breakfast: Sabudana khichdi&#10;Lunch: Puran poli&#10;Dinner: Shrikhand puri"></textarea>
+    <button class="btn btn-primary" onclick="applyFest()">Apply festival menu</button>
+  </div>`;
+}
+function applyFest(){
+  const name=document.getElementById('fest-name').value.trim();
+  const dishes=document.getElementById('fest-dishes').value.trim();
+  if(!name||!dishes)return;
+  S.festivalMeals={name,dishes};save();festOpen=false;
+  document.getElementById('fest-panel').style.display='none';
+  document.getElementById('fest-btn').textContent='Festival';
+  renderToday();
+}
+
+// ── WHATSAPP ─────────────────────────────────────────────────────────
+function buildMsg(isCook){
+  const d=new Date();const dow=d.getDay();const T=S.today||{};
+  if(isCook){
+    let msg=`*आजचे जेवण* 🍽\n${DAYS_MR[dow]}, ${d.getDate()} ${MON_MR[d.getMonth()]} ${d.getFullYear()}\n${'─'.repeat(24)}\n`;
+    if(S.festivalMeals)return msg+`\n*सण: ${S.festivalMeals.name}*\n${S.festivalMeals.dishes}\n\n_आज चे जेवण_`;
+    if(T.bf)msg+=`\n*न्याहारी*\n• ${tmr(T.bf.n)}\n`;
+    function blk(lbl,p){
+      msg+=`\n*${lbl}*\n`;
+      if(T[p+'_main']){msg+=`• ${tmr(T[p+'_main'].n)}\n`;const cd=(S.customDishes||[]).find(x=>x.name===T[p+'_main'].n);if(cd){if(cd.notes)msg+=`  _(${cd.notes})_\n`;if(cd.ytUrl)msg+=`  📹 ${cd.ytUrl}\n`;}}
+      if(T[p+'_dal'])msg+=`• ${tmr(T[p+'_dal'].n)}\n`;
+      if(T[p+'_rice'])msg+=`• ${tmr(T[p+'_rice'].n)}\n`;
+      const b=T[p+'_bhakri'];if(b&&b.n&&b.count>0)msg+=`• ${tmr(b.n)} – ${b.count} नग\n`;
+      const ch=T[p+'_chapati'];if(ch&&ch.count>0)msg+=`• चपाती – ${ch.count} नग\n`;
+    }
+    blk('दुपारचे जेवण','lu');blk('रात्रीचे जेवण','di');
+    return msg+`\n_आज चे जेवण_`;
+  } else {
+    let msg=`*Aaj che Jevan* 🍽\n${d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}\n${'─'.repeat(26)}\n`;
+    if(S.festivalMeals)return msg+`\n*Festival: ${S.festivalMeals.name}*\n${S.festivalMeals.dishes}\n\n_Aaj che Jevan_`;
+    if(T.bf)msg+=`\n*Breakfast*\n• ${T.bf.n}\n`;
+    function blk2(lbl,p){msg+=`\n*${lbl}*\n`;if(T[p+'_main'])msg+=`• ${T[p+'_main'].n}\n`;if(T[p+'_dal'])msg+=`• ${T[p+'_dal'].n}\n`;if(T[p+'_rice'])msg+=`• ${T[p+'_rice'].n}\n`;const b=T[p+'_bhakri'];if(b&&b.n&&b.count>0)msg+=`• ${b.n} × ${b.count}\n`;const ch=T[p+'_chapati'];if(ch&&ch.count>0)msg+=`• Chapati × ${ch.count}\n`;}
+    blk2('Lunch','lu');blk2('Dinner','di');
+    return msg+`\n_Aaj che Jevan_`;
+  }
+}
+function setWAView(v){
+  waView=v;
+  document.getElementById('wa-cook-btn').style.cssText=v==='cook'?'background:var(--text);color:#fff;border-color:var(--text)':'';
+  document.getElementById('wa-fam-btn').style.cssText=v==='family'?'background:var(--text);color:#fff;border-color:var(--text)':'';
+  renderWA();
+}
+function renderWA(){
+  const isCook=waView==='cook';
+  document.getElementById('wa-preview').textContent=buildMsg(isCook);
+  const cs=(S.contacts||[]).filter(c=>isCook?(c.role==='cook'||c.role==='housekeeper'):(c.role==='family'));
+  document.getElementById('wa-contacts').innerHTML=cs.map(c=>{
+    const hp=c.phone&&c.phone.length>5;
+    return `<div class="c-row"><div class="c-av" style="background:${c.color};color:${c.tc}">${c.name.slice(0,2).toUpperCase()}</div>
+      <div style="flex:1"><div style="font-size:14px;font-weight:500">${c.name}</div><div style="font-size:11px;color:var(--text-3)">${c.role}${c.phone?' · '+c.phone:' · no number'}</div></div>
+      ${hp?`<button class="btn btn-wa" onclick="sendWA('${c.phone}',${isCook})">Send</button>`:`<button class="btn" onclick="goTab('contacts',document.querySelectorAll('.tab-btn')[4])">Add no.</button>`}
+    </div>`;
+  }).join('')||'<div style="font-size:13px;color:var(--text-3);padding:8px 0">No contacts in this group.</div>';
+}
+function sendWA(phone,isCook){window.open(`https://wa.me/${phone}?text=${encodeURIComponent(buildMsg(isCook))}`);}
+function sendToAll(){
+  const isCook=waView==='cook';
+  const cs=(S.contacts||[]).filter(c=>(isCook?(c.role==='cook'||c.role==='housekeeper'):(c.role==='family'))&&c.phone&&c.phone.length>5);
+  if(!cs.length){alert('Add phone numbers in Contacts first.');return;}
+  cs.forEach((c,i)=>setTimeout(()=>sendWA(c.phone,isCook),i*800));
+  const st=document.getElementById('wa-status');st.textContent=`Opening WhatsApp for ${cs.length} contact(s)…`;setTimeout(()=>st.textContent='',4000);
+}
+function copyMsg(){
+  navigator.clipboard.writeText(buildMsg(waView==='cook')).then(()=>{
+    const st=document.getElementById('wa-status');st.textContent='Copied to clipboard!';setTimeout(()=>st.textContent='',2500);
+  }).catch(()=>{const st=document.getElementById('wa-status');st.textContent='Copy the text above manually.';});
+}
+
+// ── ADD DISH ─────────────────────────────────────────────────────────
+function addDish(){
+  const name=document.getElementById('nd-name').value.trim();
+  const marathi=document.getElementById('nd-marathi').value.trim();
+  const cat=document.getElementById('nd-cat').value;
+  const meal=document.getElementById('nd-meal').value;
+  const sv=document.getElementById('nd-season').value;
+  const seasons=sv==='all'?['monsoon','winter','summer']:[sv];
+  const type=cat==='seafood'?'sea':cat==='chicken'?'chicken':cat==='mutton'?'mutton':cat.includes('egg')?'egg':'veg';
+  const ytUrl=document.getElementById('nd-yt').value.trim();
+  const notes=document.getElementById('nd-notes').value.trim();
+  if(!name){alert('Please enter a dish name.');return;}
+  if(!S.customDishes)S.customDishes=[];
+  S.customDishes.push({id:'cd_'+Date.now(),name,marathi,cat,meal,seasons,type,ytUrl,notes});
+  if(marathi)MR[name]=marathi;
+  save();
+  ['nd-name','nd-marathi','nd-yt','nd-notes'].forEach(id=>document.getElementById(id).value='');
+  const st=document.getElementById('add-status');st.textContent=`"${name}" added to menu!`;setTimeout(()=>st.textContent='',3000);
+  renderCustom();
+}
+function removeCustom(id){S.customDishes=(S.customDishes||[]).filter(d=>d.id!==id);save();renderCustom();}
+function renderCustom(){
+  const c=document.getElementById('custom-list');const cd=S.customDishes||[];
+  if(!cd.length){c.innerHTML='<div style="font-size:13px;color:var(--text-3)">No custom dishes yet.</div>';return;}
+  c.innerHTML=cd.map(d=>`<div class="card card-pad" style="margin-bottom:6px">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:500">${d.name}${d.marathi?` <span style="color:var(--text-3);font-weight:400">· ${d.marathi}</span>`:''}</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:2px">${d.cat} · ${d.meal} · ${(d.seasons||[]).join('/')}${d.notes?' · '+d.notes:''}</div>
+        ${d.ytUrl?`<a href="${d.ytUrl}" target="_blank" style="font-size:11px;color:var(--blue)">▶ recipe video</a>`:''}
+      </div>
+      <button class="btn btn-red" onclick="removeCustom('${d.id}')">✕</button>
+    </div>
+  </div>`).join('');
+}
+
+// ── HISTORY ──────────────────────────────────────────────────────────
+function renderHistory(){
+  const c=document.getElementById('history-list');
+  if(!S.history.length){c.innerHTML='<div class="empty"><div class="empty-icon">📋</div><div class="empty-lbl">No history yet</div></div>';return;}
+  c.innerHTML=[...S.history].reverse().slice(0,14).map(day=>`
+    <div class="card card-pad" style="margin-bottom:8px">
+      <div style="font-size:12px;font-weight:500;color:var(--text-3);margin-bottom:8px">${day.date}</div>
+      ${Object.entries(day.meals||{}).filter(([,v])=>v).map(([k,v])=>`
+        <div style="display:flex;gap:8px;font-size:13px;padding:2px 0">
+          <span style="color:var(--text-3);font-size:11px;min-width:100px;flex-shrink:0">${k.replace(/_/g,' ')}</span>
+          <span>${v}</span>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+// ── CONTACTS ─────────────────────────────────────────────────────────
+function renderContacts(){
+  document.getElementById('contacts-list').innerHTML=(S.contacts||[]).map((c,i)=>`
+    <div class="c-row">
+      <div class="c-av" style="background:${c.color};color:${c.tc}">${c.name.slice(0,2).toUpperCase()}</div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:500">${c.name}</div>
+        <div style="font-size:11px;color:var(--text-3)">${c.role}</div>
+      </div>
+      <input style="width:145px;padding:6px 10px;font-size:12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);font-family:DM Sans,sans-serif"
+        placeholder="Phone number" value="${c.phone||''}" oninput="updatePhone(${i},this.value)"/>
+    </div>`).join('');
+}
+function updatePhone(i,v){if(S.contacts&&S.contacts[i]){S.contacts[i].phone=v.trim();save();}}
+function addContact(){
+  const name=document.getElementById('new-name').value.trim();
+  const phone=document.getElementById('new-phone').value.trim();
+  const role=document.getElementById('new-role').value;
+  if(!name)return;if(!S.contacts)S.contacts=[];
+  const cols=[{bg:'#E8F4ED',tc:'#1A5C33'},{bg:'#E8EFF8',tc:'#1A3A6A'},{bg:'#F8F2EA',tc:'#6A4A1A'}];
+  const col=cols[S.contacts.length%3];
+  S.contacts.push({id:'c_'+Date.now(),name,phone,role,color:col.bg,tc:col.tc});
+  save();renderContacts();
+  document.getElementById('new-name').value='';document.getElementById('new-phone').value='';
+}
+
+// ── MENU ─────────────────────────────────────────────────────────────
+function renderMenu(){
+  const cats=[{k:'all',l:'All'},{k:'breakfast_veg',l:'Breakfast veg'},{k:'breakfast_egg',l:'Breakfast egg'},{k:'seafood',l:'Seafood'},{k:'chicken',l:'Chicken'},{k:'mutton',l:'Mutton'},{k:'sabzi',l:'Sabzi'},{k:'dal',l:'Dal & usal'},{k:'rice',l:'Rice'},{k:'bhakri',l:'Bhakri'},{k:'snacks',l:'Snacks'}];
+  document.getElementById('menu-filters').innerHTML=cats.map(c=>`<span class="pill${mf===c.k?' active':''}" onclick="setMF('${c.k}')" style="cursor:pointer">${c.l}</span>`).join('');
+  const custom=(S.customDishes||[]).map(cd=>({n:cd.name,pool:cd.cat,meal:cd.meal,seasons:cd.seasons||['monsoon','winter','summer'],t:cd.type,custom:true}));
+  const showCats=mf==='all'?[...new Set([...ALL,...custom].map(d=>d.pool))]:[mf];
+  document.getElementById('menu-content').innerHTML=showCats.map(k=>{
+    const label=cats.find(c=>c.k===k)?.l||k;
+    const items=[...ALL,...custom].filter(d=>d.pool===k);
+    return `<div style="margin-bottom:1rem">
+      <div style="font-size:11px;font-weight:500;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">${label}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px">
+        ${items.map(d=>`<span class="dish-pill${!inSeason(d)?' oos':''}${d.custom?' custom':''}" title="${d.meal} · ${d.seasons.join('/')}">${d.n}</span>`).join('')}
+      </div></div>`;
+  }).join('');
+}
+function setMF(k){mf=k;renderMenu();}
+
+// ── TABS ─────────────────────────────────────────────────────────────
+function goTab(tab,el){
+  document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));
+  if(el)el.classList.add('active');
+  ['today','whatsapp','adddish','history','contacts','menu'].forEach(t=>document.getElementById('tab-'+t).style.display=t===tab?'block':'none');
+  if(tab==='whatsapp'){waView='cook';setWAView('cook');}
+  if(tab==='history')renderHistory();
+  if(tab==='contacts')renderContacts();
+  if(tab==='menu')renderMenu();
+  if(tab==='adddish')renderCustom();
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────
+const now=new Date();
+const MONS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const WDAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+document.getElementById('hdr-date').textContent=`${WDAYS[now.getDay()]}, ${now.getDate()} ${MONS[now.getMonth()]} ${now.getFullYear()}`;
+if(!S.today||!S.today.bf)suggestAll();else renderToday();
+</script>
+</body>
+</html>
